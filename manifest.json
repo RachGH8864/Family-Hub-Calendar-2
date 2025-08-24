@@ -1,0 +1,20 @@
+{
+  "name": "Bierman Family Calendar",
+  "short_name": "Family Calendar",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#4caf50",
+  "icons": [
+    {
+      "src": "bierman-calendar-icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "bierman-calendar-icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
