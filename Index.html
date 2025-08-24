@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bierman Family Calendar</title>
+
+  <!-- Link to manifest -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#4caf50" />
+
+  <!-- App icons -->
+  <link rel="icon" type="image/png" sizes="192x192" href="bierman-calendar-icon.png" />
+  <link rel="apple-touch-icon" href="bierman-calendar-icon.png" />
+
+  <!-- Styles -->
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #fdfdfd;
+      color: #333;
+      text-align: center;
+    }
+    header {
+      background: #4caf50;
+      color: white;
+      padding: 1rem;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+    .calendar {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 5px;
+      padding: 10px;
+    }
+    .day {
+      border: 1px solid #ccc;
+      min-height: 80px;
+      padding: 5px;
+      position: relative;
+    }
+    .day.today {
+      background: #e8f5e9;
+      border: 2px solid #4caf50;
+    }
+    .event {
+      background: #4caf50;
+      color: white;
+      font-size: 0.8rem;
+      padding: 2px 4px;
+      border-radius: 4px;
+      margin-top: 2px;
+      display: block;
+    }
+    footer {
+      margin: 20px 0;
+      font-size: 0.9rem;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <header>Bierman Family Calendar</header>
+  <div id="calendar" class="calendar"></div>
+  <footer>Tap any day to add an event</footer>
+
+  <script>
+    const calendarEl = document.getElementById("calendar");
+    const now = new Date();
+    const month = now.getMonth();
+    const year = now.getFullYear();
+
+    // Days in month
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    // First day of the month
+    const firstDay = new Date(year, month, 1).getDay();
+
+    // Render blank days before start
+    for (let i = 0; i < firstDay; i++) {
+      const blank = document.createElement("div");
+      blank.className = "day";
+      calendarEl.appendChild(blank);
+    }
+
+    // Load events from localStorage
+    const savedEvents = JSON.parse(localStorage.getItem("events") || "{}");
+
+    for (let d = 1; d <= daysInMonth; d++) {
+      const day = document.createElement("div");
+      day.className = "day";
+      if (d === now.getDate()) day.classList.add("today");
+      day.innerHTML = `<strong>${d}</strong>`;
+
+      // Render saved events
+      if (savedEvents[d]) {
+        savedEvents[d].forEach(ev => {
+          const evEl = document.createElement("span");
+          evEl.className = "event";
+          evEl.textContent = ev;
+          day.appendChild(evEl);
+        });
+      }
+
+      // Add click to add event
+      day.addEventListener("click", () => {
+        const ev = prompt("Enter event for " + d + "/" + (month + 1));
+        if (ev) {
+          if (!savedEvents[d]) savedEvents[d] = [];
+          savedEvents[d].push(ev);
+          localStorage.setItem("events", JSON.stringify(savedEvents));
+          location.reload();
+        }
+      });
+
+      calendarEl.appendChild(day);
+    }
+  </script>
+
+  <!-- Register service worker -->
+  <script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("service-worker.js");
+    }
+  </script>
+</body>
+</html>
